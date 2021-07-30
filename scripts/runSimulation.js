@@ -8,32 +8,41 @@ export const runSimulation = () => {
 const simulate = (ctx, canvas) => {
 	let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 	let data = imageData.data;
+	let newImageData = ctx.createImageData(canvas.width, canvas.height);
+	let newData = newImageData.data
 	for (let i = 0; i < data.length; i += 4) {
 		let neighbors = getLiveNeighbors(i, canvas.width, data.length);
 		let liveNeighbors = neighbors.filter(elem => {
 			return data[elem] != 0;
 		});
 		// check if cell is live
-		if (data[i] && data[i + 1] && data[i + 2] && data[i + 3]) {
+		if (data[i] && data[i + 1] && data[i + 2]) {
 			if (liveNeighbors.length == 2 || liveNeighbors.length == 3) {
-				data[i] = 0;
-				data[i + 1] = 0;
-				data[i + 2] = 0;
-				data[i + 3] = 0;
+				// continue to the next generation
+				newData[i] = 255;
+				newData[i + 1] = 255;
+				newData[i + 2] = 255;
+				newData[i + 3] = 255;
+			} else {
+				// die off
+				newData[i] = 0;
+				newData[i + 1] = 0;
+				newData[i + 2] = 0;
+				newData[i + 3] = 0;
 			}
 		// check if cell is dead
 		} else {
 			if (liveNeighbors.length == 3) {
-				data[i] = 255;
-				data[i + 1] = 255;
-				data[i + 2] = 255;
-				data[i + 3] = 255;
+				newData[i] = 255;
+				newData[i + 1] = 255;
+				newData[i + 2] = 255;
+				newData[i + 3] = 255;
 			}
 		}
 	}
 	// update data
-	ctx.putImageData(imageData, 0, 0);
-	setTimeout(() => simulate(ctx, canvas), 100);
+	ctx.putImageData(newImageData, 0, 0);
+	setTimeout(() => simulate(ctx, canvas), 10);
 }
 
 const getLiveNeighbors = (idx, width, length) => {
