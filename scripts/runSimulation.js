@@ -11,12 +11,12 @@ const simulate = (ctx, canvas) => {
 	let newImageData = ctx.createImageData(canvas.width, canvas.height);
 	let newData = newImageData.data
 	for (let i = 0; i < data.length; i += 4) {
-		let neighbors = getLiveNeighbors(i, canvas.width, data.length);
+		let neighbors = getLiveNeighbors(i, canvas.width);
 		let liveNeighbors = neighbors.filter(elem => {
-			return data[elem] != 0;
+			return 0 < elem && elem < data.length && data[elem] != 0;
 		});
 		// check if cell is live
-		if (data[i] && data[i + 1] && data[i + 2]) {
+		if (data[i] && data[i + 1] && data[i + 2] && data[i + 3]) {
 			if (liveNeighbors.length == 2 || liveNeighbors.length == 3) {
 				// continue to the next generation
 				newData[i] = 255;
@@ -37,6 +37,11 @@ const simulate = (ctx, canvas) => {
 				newData[i + 1] = 255;
 				newData[i + 2] = 255;
 				newData[i + 3] = 255;
+			} else {
+				newData[i] = 0;
+				newData[i + 1] = 0;
+				newData[i + 2] = 0;
+				newData[i + 3] = 0;
 			}
 		}
 	}
@@ -45,17 +50,16 @@ const simulate = (ctx, canvas) => {
 	setTimeout(() => simulate(ctx, canvas), 10);
 }
 
-const getLiveNeighbors = (idx, width, length) => {
+const getLiveNeighbors = (idx, width) => {
 	// return a valid list of neighbor cells
 	return [
-		(idx - width) - 1,
-		(idx - width),
-		(idx - width) + 1,
+		idx - width - 1,
+		idx - width,
+		idx - width + 1,
 		idx - 1,
 		idx + 1,
-		(idx + width) - 1,
-		(idx + width) + 1
-	].filter(elem => {
-		return 0 < elem && elem < length;
-	});
+		idx + width - 1,
+		idx + width,
+		idx + width + 1
+	];
 }
