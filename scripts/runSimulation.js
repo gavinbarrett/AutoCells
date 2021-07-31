@@ -10,56 +10,60 @@ const simulate = (ctx, canvas) => {
 	let data = imageData.data;
 	let newImageData = ctx.createImageData(canvas.width, canvas.height);
 	let newData = newImageData.data
-	for (let i = 0; i < data.length; i += 4) {
-		let neighbors = getLiveNeighbors(i, canvas.width);
+	//console.log(`state: ${data}`);
+	for (let idx = 0; idx < data.length; idx += 4) {
+		let neighbors = getLiveNeighbors(idx, canvas.width);
+		//console.log(`Neighbors of ${i}:\n${neighbors}\n`);
 		let liveNeighbors = neighbors.filter(elem => {
 			return 0 < elem && elem < data.length && data[elem] != 0;
 		});
+		//console.log(`Live neighbors of ${i}:\n${liveNeighbors}\n\n`);
 		// check if cell is live
-		if (data[i] && data[i + 1] && data[i + 2] && data[i + 3]) {
+		if (data[idx] && data[idx + 1] && data[idx + 2] && data[idx + 3]) {
 			if (liveNeighbors.length == 2 || liveNeighbors.length == 3) {
 				// continue to the next generation
-				newData[i] = 255;
-				newData[i + 1] = 255;
-				newData[i + 2] = 255;
-				newData[i + 3] = 255;
+				newData[idx] = 255;
+				newData[idx + 1] = 255;
+				newData[idx + 2] = 255;
+				newData[idx + 3] = 255;
 			} else {
 				// die off
-				newData[i] = 0;
-				newData[i + 1] = 0;
-				newData[i + 2] = 0;
-				newData[i + 3] = 0;
+				newData[idx] = 0;
+				newData[idx + 1] = 0;
+				newData[idx + 2] = 0;
+				newData[idx + 3] = 0;
 			}
 		// check if cell is dead
 		} else {
 			if (liveNeighbors.length == 3) {
-				newData[i] = 255;
-				newData[i + 1] = 255;
-				newData[i + 2] = 255;
-				newData[i + 3] = 255;
+				newData[idx] = 255;
+				newData[idx + 1] = 255;
+				newData[idx + 2] = 255;
+				newData[idx + 3] = 255;
 			} else {
-				newData[i] = 0;
-				newData[i + 1] = 0;
-				newData[i + 2] = 0;
-				newData[i + 3] = 0;
+				newData[idx] = 0;
+				newData[idx + 1] = 0;
+				newData[idx + 2] = 0;
+				newData[idx + 3] = 0;
 			}
 		}
 	}
+	//console.log(`Newstate: ${newImageData.data}`);
 	// update data
 	ctx.putImageData(newImageData, 0, 0);
-	setTimeout(() => simulate(ctx, canvas), 10);
+	setTimeout(() => simulate(ctx, canvas), 50);
 }
 
 const getLiveNeighbors = (idx, width) => {
 	// return a valid list of neighbor cells
 	return [
-		idx - width - 1,
-		idx - width,
-		idx - width + 1,
-		idx - 1,
-		idx + 1,
-		idx + width - 1,
-		idx + width,
-		idx + width + 1
+		idx - ((width - 1) * 4),
+		idx - (width * 4) ,
+		idx - ((width + 1) * 4),
+		idx - 4,
+		idx + 4,
+		idx + ((width - 1) * 4),
+		idx + (width * 4),
+		idx + ((width + 1) * 4)
 	];
 }
