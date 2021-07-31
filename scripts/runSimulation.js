@@ -47,7 +47,7 @@ const simulate = (ctx, canvas) => {
 	}
 	// update data
 	ctx.putImageData(newImageData, 0, 0);
-	setTimeout(() => simulate(ctx, canvas), 10);
+	setTimeout(() => simulate(ctx, canvas), 20);
 }
 
 const getLiveNeighbors = (idx, width) => {
